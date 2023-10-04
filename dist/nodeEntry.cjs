@@ -9010,17 +9010,27 @@ var require_cjs2 = __commonJS({
 // src/nodeEntry.ts
 var nodeEntry_exports = {};
 __export(nodeEntry_exports, {
+  runSandboxedBashScript: () => runSandboxedBashScript,
+  runSandboxedNodeScript: () => runSandboxedNodeScript,
   runSandboxedPythonScript: () => runSandboxedPythonScript
 });
 module.exports = __toCommonJS(nodeEntry_exports);
 
-// src/impl/runSandboxedPythonScript.ts
+// src/impl/runSandboxedScript.ts
 var import_sdk = __toESM(require_cjs2(), 1);
 async function runSandboxedPythonScript(script) {
   return await (0, import_sdk.runCode)("Python3", script);
 }
+async function runSandboxedNodeScript(script) {
+  return await (0, import_sdk.runCode)("Node16", script);
+}
+async function runSandboxedBashScript(script) {
+  return await (0, import_sdk.runCode)("Bash", script);
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  runSandboxedBashScript,
+  runSandboxedNodeScript,
   runSandboxedPythonScript
 });
 /*! Bundled license information:

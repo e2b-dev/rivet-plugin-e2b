@@ -1,83 +1,95 @@
-// src/nodes/RunSandboxedPythonScriptNode.ts
-function RunSandboxedPythonScriptNode_default(rivet) {
-  const nodeImpl = {
-    create() {
-      return {
-        id: rivet.newId(),
-        data: {},
-        title: "Run Sandboxed Python Script",
-        type: "runSandboxedPythonScript",
-        // must match the type of your node
-        visualData: {
-          x: 0,
-          y: 0,
-          width: 200
-        }
-      };
-    },
-    getInputDefinitions(data, _connections, _nodes, _project) {
-      return [
-        {
-          id: "scriptText",
-          dataType: "string",
-          required: true,
-          title: "Script"
-        }
-      ];
-    },
-    getOutputDefinitions(_data, _connections, _nodes, _project) {
-      return [
-        {
-          id: "stdout",
-          dataType: "string",
-          title: "stdout"
-        },
-        {
-          id: "stderr",
-          dataType: "string",
-          title: "stderr"
-        }
-      ];
-    },
-    getUIData() {
-      return {
-        group: "E2B",
-        contextMenuTitle: "Run Sandboxed Python Script",
-        infoBoxTitle: "Run Sandboxed Python Script",
-        infoBoxBody: "Run a python script in a sandboxed environment."
-      };
-    },
-    getEditors(_data) {
-      return [];
-    },
-    getBody(data) {
-      return ``;
-    },
-    async process(data, inputData, context) {
-      if (context.executor !== "nodejs")
-        throw new Error("This node can only be run using a nodejs executor.");
-      let scriptText = rivet.coerceType(
-        inputData["scriptText"],
-        "string"
-      );
-      const { runSandboxedPythonScript } = await import("../dist/nodeEntry.cjs");
-      const { stdout, stderr } = await runSandboxedPythonScript(scriptText);
-      return {
-        ["stdout"]: {
-          type: "string",
-          value: stdout
-        },
-        ["stderr"]: {
-          type: "string",
-          value: stderr
-        }
-      };
-    }
-  };
+// src/nodes/RunSandboxedScriptNode.ts
+var scriptTextInputDefinition = {
+  id: "scriptText",
+  dataType: "string",
+  required: true,
+  title: "Script"
+};
+var scriptOutputDefinitions = [
+  {
+    id: "stdout",
+    dataType: "string",
+    title: "stdout"
+  },
+  {
+    id: "stderr",
+    dataType: "string",
+    title: "stderr"
+  }
+];
+function runSandboxedScriptNodeFactory(rivet, runtime) {
   return rivet.pluginNodeDefinition(
-    nodeImpl,
-    "Run Python Script in E2B sandboxed environment"
+    {
+      create() {
+        return {
+          id: rivet.newId(),
+          data: {},
+          // no internal data
+          title: `Run Sandboxed ${runtime} Script`,
+          // @ts-ignore
+          type: `runSandboxed${runtime}Script`,
+          // must match the type of your node
+          visualData: {
+            x: 0,
+            y: 0,
+            width: 300
+          }
+        };
+      },
+      getInputDefinitions(data, _connections, _nodes, _project) {
+        return [
+          scriptTextInputDefinition
+        ];
+      },
+      getOutputDefinitions(_data, _connections, _nodes, _project) {
+        return scriptOutputDefinitions;
+      },
+      getUIData() {
+        return {
+          group: "E2B",
+          contextMenuTitle: `Run Sandboxed ${runtime} Script`,
+          infoBoxTitle: `Run Sandboxed ${runtime} Script`,
+          infoBoxBody: `Run a ${runtime} script in a sandboxed environment.`
+        };
+      },
+      getEditors(_data) {
+        return [];
+      },
+      getBody(data) {
+        return ``;
+      },
+      async process(data, inputData, context) {
+        if (context.executor !== "nodejs")
+          throw new Error("This node can only be run using a nodejs executor.");
+        const scriptText = rivet.coerceType(
+          inputData["scriptText"],
+          "string"
+        );
+        const nodeEntry = await import("../dist/nodeEntry.cjs");
+        const { stdout, stderr } = await nodeEntry[`runSandboxed${runtime}Script`](scriptText);
+        return {
+          ["stdout"]: {
+            type: "string",
+            value: stdout
+          },
+          ["stderr"]: {
+            type: "string",
+            value: stderr
+          }
+        };
+      }
+    },
+    `Run ${runtime} Script in E2B sandboxed environment`
   );
+}
+function runSandboxedPythonScriptNode(rivet) {
+  return runSandboxedScriptNodeFactory(rivet, "Python");
+}
+function runSandboxedNodeScriptNode(rivet) {
+  return runSandboxedScriptNodeFactory(rivet, "Node");
+}
+function runSandboxedBashScriptNode(rivet) {
+  return runSandboxedScriptNodeFactory(rivet, "Bash");
 }
 
 // src/index.ts
@@ -85,7 +97,15 @@ var initializer = (rivet) => {
   const plugin = {
     id: "rivet-plugin-e2b",
     name: "E2B Rivet Plugin",
-    configSpec: {},
+    configSpec: {
+      e2bApiKey: {
+        type: "secret",
+        label: "E2B API Key",
+        description: "The API key required to use the E2B. Get your at https://e2b.dev/docs",
+        pullEnvironmentVariable: "E2B_API_KEY",
+        helperText: "You may also set the E2B_API_KEY environment variable."
+      }
+    },
     contextMenuGroups: [
       {
         id: "e2b",
@@ -93,7 +113,9 @@ var initializer = (rivet) => {
       }
     ],
     register: (register) => {
-      register(RunSandboxedPythonScriptNode_default(rivet));
+      register(runSandboxedPythonScriptNode(rivet));
+      register(runSandboxedNodeScriptNode(rivet));
+      register(runSandboxedBashScriptNode(rivet));
     }
   };
   return plugin;

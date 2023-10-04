@@ -1,4 +1,4 @@
-# Rivet Plugin - E2B Code Exec
+# Rivet Plugin - E2B
 
 [Rivet](https://github.com/Ironclad/rivet) plugin that allows you to execute arbitrary code in sandboxed [E2B](https://e2b.dev/docs) environments.
 

@@ -1,1 +1,1 @@
-export * from "./impl/runSandboxedPythonScript";
+export * from "./impl/runSandboxedScript";
