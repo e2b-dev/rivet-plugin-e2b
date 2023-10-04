@@ -15,6 +15,7 @@ import type {
   Project,
   Rivet,
 } from "@ironclad/rivet-core";
+import { runCode } from "@e2b/sdk";
 
 export type RunSandboxedPythonScriptNode = ChartNode<
   "runSandboxedPythonScript",
@@ -111,9 +112,6 @@ export default function (rivet: typeof Rivet) {
       inputData: Inputs,
       context: InternalProcessContext
     ): Promise<Outputs> {
-      if (context.executor !== "nodejs")
-        throw new Error("This node can only be run using a nodejs executor.");
-
       // TODO: Take scriptText option optionally from data
       // const scriptText = rivet.getInputOrData(
       //   data,
@@ -126,9 +124,13 @@ export default function (rivet: typeof Rivet) {
         "string"
       );
 
-      const { runSandboxedPythonScript } = await import("../nodeEntry");
+      await runCode(
+        // @ts-ignore
+        "Python3",
+        scriptText
+      );
 
-      const { stdout, stderr } = await runSandboxedPythonScript(scriptText);
+      const { stdout, stderr } = { stdout: "", stderr: ""}
 
       return {
         ["stdout" as PortId]: {

@@ -1,1 +1,1 @@
-export * from "./impl/runSandboxedPythonScript";
+console.log(`Node entry - empty for now`)
