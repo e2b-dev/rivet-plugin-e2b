@@ -59,6 +59,10 @@ function runSandboxedScriptNodeFactory(rivet, runtime) {
         return ``;
       },
       async process(data, inputData, context) {
+        const apiKey = context.getPluginConfig("e2bApiKey");
+        if (!apiKey) {
+          throw new Error("E2B API key not set.");
+        }
         if (context.executor !== "nodejs")
           throw new Error("This node can only be run using a nodejs executor.");
         const scriptText = rivet.coerceType(
@@ -66,7 +70,7 @@ function runSandboxedScriptNodeFactory(rivet, runtime) {
           "string"
         );
         const nodeEntry = await import("../dist/nodeEntry.cjs");
-        const { stdout, stderr } = await nodeEntry[`runSandboxed${runtime}Script`](scriptText);
+        const { stdout, stderr } = await nodeEntry[`runSandboxed${runtime}Script`](scriptText, apiKey);
         return {
           ["stdout"]: {
             type: "string",

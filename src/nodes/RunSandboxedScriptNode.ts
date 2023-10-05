@@ -109,6 +109,11 @@ function runSandboxedScriptNodeFactory(rivet: typeof Rivet, runtime: string) {
         inputData: Inputs,
         context: InternalProcessContext
       ): Promise<Outputs> {
+        const apiKey = context.getPluginConfig('e2bApiKey');
+        if (!apiKey) {
+          throw new Error('E2B API key not set.');
+        }
+        
         if (context.executor !== "nodejs")
           throw new Error("This node can only be run using a nodejs executor.");
 
@@ -120,7 +125,7 @@ function runSandboxedScriptNodeFactory(rivet: typeof Rivet, runtime: string) {
         const nodeEntry = await import("../nodeEntry");
 
         // @ts-expect-error TS7053
-        const { stdout, stderr } = await nodeEntry[`runSandboxed${runtime}Script`](scriptText);
+        const { stdout, stderr } = await nodeEntry[`runSandboxed${runtime}Script`](scriptText, apiKey);
 
         return {
           ["stdout" as PortId]: {

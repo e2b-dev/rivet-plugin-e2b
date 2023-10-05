@@ -2,9 +2,11 @@
 
 [Rivet](https://github.com/Ironclad/rivet) plugin that allows you to execute arbitrary code in sandboxed [E2B](https://e2b.dev/docs) environments.
 
+![](.assets/demo.png)
+
 ## Using the plugin
 
-FIXME: Link to Rivet docs 
+https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/all 
 
 ## Local Development
 

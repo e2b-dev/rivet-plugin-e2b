@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@dqbd/tiktoken/-/tiktoken-1.0.7.tgz#612871cf91eba5599c804f100c573aa4d8596f57"
   integrity sha512-bhR5k5W+8GLzysjk8zTMVygQZsgvf7W1F0IlL4ZQ5ugjo5rCyiwGM5d8DYriXspytfu98tv59niang3/T+FoDw==
 
-"@e2b/sdk@0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@e2b/sdk/-/sdk-0.5.1.tgz#0e3c6a012c18792123b986a487d429e23e9f7df6"
-  integrity sha512-0eM+CaGNENDDjVQN1v9WbKHSKdVVJytP9RE0uQnA4xGrYz7gavDuNJwOa6XEzIOelmB7WpiEtXfn3LLk5RysaA==
+"@e2b/sdk@0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@e2b/sdk/-/sdk-0.6.0.tgz#f2393f73ba6447b9af6dc636fe6e0102333778a3"
+  integrity sha512-bJ7wArJZs30QqGfqgcNjorrB12a08VdvnPjmeC57+Dl9CzRlQOei0ff0dkr8Av9/WDEye4bbfYm8Pz90EeLDzA==
   dependencies:
     bufferutil "^4.0.7"
     cross-fetch "^3.1.5"

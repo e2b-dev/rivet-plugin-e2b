@@ -7943,7 +7943,7 @@ var require_cjs2 = __commonJS({
       baseUrl: `https://${SESSION_DOMAIN}`,
       init: {
         headers: {
-          package_version: "0.5.1",
+          package_version: "0.6.0",
           lang: "js",
           engine: platform__default["default"].name || "unknown",
           lang_version: platform__default["default"].version || "unknown",
@@ -8177,7 +8177,7 @@ var require_cjs2 = __commonJS({
     var createSession = client.path("/sessions").method("post").create({ api_key: true });
     var refreshSession = client.path("/sessions/{sessionID}/refresh").method("post").create({ api_key: true });
     var SessionConnection = class {
-      // let's keep opts readonly, but public – for convenience, mainly when debugging
+      // let's keep opts readonly, but public - for convenience, mainly when debugging
       constructor(opts) {
         var _a2, _b, _c;
         this.opts = opts;
@@ -8954,26 +8954,32 @@ var require_cjs2 = __commonJS({
         });
       }
     };
-    var CodeRuntime;
-    (function(CodeRuntime2) {
-      CodeRuntime2["Node16"] = "Node16";
-      CodeRuntime2["Python3"] = "Python3";
-    })(CodeRuntime || (CodeRuntime = {}));
+    exports.CodeRuntime = void 0;
+    (function(CodeRuntime) {
+      CodeRuntime["Node16"] = "Node16";
+      CodeRuntime["Python3"] = "Python3";
+      CodeRuntime["Bash"] = "Bash";
+    })(exports.CodeRuntime || (exports.CodeRuntime = {}));
     function runCode2(runtime, code, opts) {
       return __awaiter(this, void 0, void 0, function* () {
         let binary = "";
         let filepath = "";
         let envID = "";
         switch (runtime) {
-          case CodeRuntime.Node16:
+          case exports.CodeRuntime.Node16:
             envID = "Nodejs";
             binary = "node";
             filepath = "/index.js";
             break;
-          case CodeRuntime.Python3:
+          case exports.CodeRuntime.Python3:
             envID = "Python3";
             binary = "python3";
             filepath = "/main.py";
+            break;
+          case exports.CodeRuntime.Bash:
+            envID = "Bash";
+            binary = "bash";
+            filepath = "/main.sh";
             break;
           default:
             throw new Error(`The "${runtime}" runtime isn't supported. Please contact us (hello@e2b.dev) if you need support for this runtime`);
@@ -9018,14 +9024,14 @@ module.exports = __toCommonJS(nodeEntry_exports);
 
 // src/impl/runSandboxedScript.ts
 var import_sdk = __toESM(require_cjs2(), 1);
-async function runSandboxedPythonScript(script) {
-  return await (0, import_sdk.runCode)("Python3", script);
+async function runSandboxedPythonScript(script, apiKey) {
+  return await (0, import_sdk.runCode)("Python3", script, { apiKey });
 }
-async function runSandboxedNodeScript(script) {
-  return await (0, import_sdk.runCode)("Node16", script);
+async function runSandboxedNodeScript(script, apiKey) {
+  return await (0, import_sdk.runCode)("Node16", script, { apiKey });
 }
-async function runSandboxedBashScript(script) {
-  return await (0, import_sdk.runCode)("Bash", script);
+async function runSandboxedBashScript(script, apiKey) {
+  return await (0, import_sdk.runCode)("Bash", script, { apiKey });
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
